@@ -1,0 +1,174 @@
+:root {
+    --primary: #004a99;
+    --neon: #00d2ff;
+    --success: #25D366; 
+    --glass: rgba(255, 255, 255, 0.88);
+    --glass-border: rgba(255, 255, 255, 0.4);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #000;
+    color: white;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* --- DESLIZAMIENTO DE FONDOS EN PLANTA --- */
+.bg-slider {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+}
+
+.bg-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(9,13,22,0.88) 100%);
+}
+
+.slide {
+    position: absolute; width: 100%; height: 100%;
+    background-size: cover; background-position: center;
+    filter: blur(4px) brightness(0.35);
+    animation: crossfade 10s infinite alternate;
+}
+
+.slide-1 { background-image: url('impresora.jpg'); }
+.slide-2 { background-image: url('cascaron.jpg'); animation-delay: -5s; }
+
+@keyframes crossfade {
+    0%, 45% { opacity: 1; transform: scale(1); }
+    55%, 100% { opacity: 0; transform: scale(1.03); }
+}
+
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh; 
+    width: 100%;
+}
+
+.content-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+}
+
+/* --- CRISTAL INTERACTIVO GLASSMORPHISM --- */
+.glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 22px;
+    padding: 28px 22px;
+    width: 100%;
+    max-width: 390px;
+    color: #1a202c;
+    box-shadow: 0 25px 55px rgba(0,0,0,0.55);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+}
+
+.portal-screen { animation: fadeIn 0.35s ease-in-out; }
+.d-none { display: none !important; }
+
+/* --- INDICADOR SUPERIOR DE CONTROL --- */
+.system-indicator {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 6px 14px;
+    border-radius: 50px;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 15px;
+    backdrop-filter: blur(4px);
+}
+
+.pulse-dot { width: 7px; height: 7px; background: var(--neon); border-radius: 50%; animation: pulse 1.4s infinite; }
+.indicator-text { font-family: 'Orbitron', sans-serif; font-size: 0.65rem; letter-spacing: 1.8px; color: #e2e8f0; }
+
+@keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--neon); } 50% { opacity: 0.3; } }
+
+.system-indicator.success-mode { border-color: rgba(37, 211, 102, 0.3); background: rgba(37, 211, 102, 0.15); }
+.system-indicator.success-mode .pulse-dot { background: var(--success); box-shadow: 0 0 8px var(--success); }
+.system-indicator.success-mode .indicator-text { color: var(--success); font-weight: bold; }
+
+/* --- BRANDING & SHINE METÁLICO --- */
+.branding { text-align: center; margin-bottom: 18px; }
+.branding-mini { text-align: center; margin-bottom: 12px; }
+.logo-float { width: 105px; margin-bottom: 5px; animation: float 4s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+.slogan-text {
+    font-size: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
+    background: linear-gradient(90deg, #1a202c, var(--primary), var(--neon), var(--primary), #1a202c);
+    background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text;
+    animation: shineSlogan 4s linear infinite;
+}
+@keyframes shineSlogan { to { background-position: 200% center; } }
+
+.industrial-text { font-family: 'Orbitron', sans-serif; font-size: 0.62rem; color: #718096; letter-spacing: 1.2px; font-weight: 700; text-transform: uppercase; }
+.welcome-notice { text-align: center; font-size: 0.82rem; color: #4a5568; line-height: 1.4; margin-bottom: 22px; font-weight: 500; }
+
+/* --- REJILLA TÁCTIL DE PESTAÑAS --- */
+.menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
+.tab-btn {
+    padding: 10px 4px; background: rgba(0, 74, 153, 0.05); border: 1px solid rgba(0, 74, 153, 0.15);
+    color: #2d3748; font-weight: 700; font-size: 0.78rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;
+}
+.tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(0, 74, 153, 0.25); }
+
+/* --- CONTENEDOR INTERNO SCROLLABLE --- */
+.form-scroll-container { max-height: 295px; overflow-y: auto; padding-right: 2px; }
+.form-scroll-container::-webkit-scrollbar { width: 4px; }
+.form-scroll-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+
+.form-card { display: none; }
+.form-card.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* --- CAMPOS DE ENTRADA PREMIUM (Efecto Elevación) --- */
+.input-wrapper { position: relative; margin-bottom: 16px; margin-top: 4px; }
+.input-wrapper i { position: absolute; left: 2px; bottom: 10px; color: var(--primary); font-size: 0.9rem; }
+.input-wrapper input { 
+    width: 100%; padding: 8px 5px 6px 24px; background: transparent; 
+    border: none; border-bottom: 2px solid #a0aec0; outline: none; font-weight: 700; color: #1a202c; font-size: 0.92rem;
+}
+.input-wrapper label { position: absolute; left: 24px; bottom: 6px; color: #718096; transition: 0.25s cubic-bezier(0.25, 0.8, 0.25, 1); pointer-events: none; font-size: 0.88rem; font-weight: 600; }
+.input-wrapper input:focus ~ label, .input-wrapper input:not(:placeholder-shown) ~ label { transform: translateY(-22px); left: 0; font-size: 0.72rem; color: var(--primary); font-weight: 900; }
+.input-wrapper input:focus { border-color: var(--primary); }
+
+/* DESPLEGABLES */
+.select-wrapper { margin-bottom: 14px; }
+.select-label { font-size: 0.72rem; font-weight: 900; color: var(--primary); text-transform: uppercase; display: block; margin-bottom: 3px; }
+select { width: 100%; padding: 9px; background: rgba(0,0,0,0.04); border: 1px solid #cbd5e0; border-radius: 6px; font-weight: 700; color: #2d3748; font-size: 0.88rem; outline: none; }
+select:focus { border-color: var(--primary); background: white; }
+
+/* --- BOTÓN DE TRANSMISIÓN PREMIUM --- */
+.btn-industrial { 
+    width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary) 0%, #003673 100%); 
+    color: white; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; font-weight: 800; font-size: 0.88rem;
+    letter-spacing: 0.8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; 
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15); position: relative; overflow: hidden; box-shadow: 0 5px 12px rgba(0, 74, 153, 0.25);
+}
+.btn-industrial::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 35%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transform: skewX(-25deg); animation: btnShine 4s infinite;
+}
+@keyframes btnShine { 0% { left: -100%; } 20%, 100% { left: 200%; } }
+.btn-industrial:hover { transform: translateY(-2px); box-shadow: 0 10px 18px rgba(0, 210, 255, 0.35); }
+.btn-industrial:disabled { background: #cbd5e0; color: #718096; cursor: not-allowed; box-shadow: none; }
+.btn-industrial:disabled::before { display: none; }
+
+.notification { padding: 8px; border-radius: 6px; text-align: center; margin-top: 8px; font-size: 0.78rem; font-weight: 700; display: none; }
+.notification.success { display: block; background: rgba(37, 211, 102, 0.12); color: #15803d; border: 1px solid rgba(37, 211, 102, 0.25); }
+
+/* --- TECH FOOTER --- */
+.footer-tech { width: 100%; padding: 12px 0; text-align: center; background: rgba(0,0,0,0.75); border-top: 1px solid rgba(255,255,255,0.08); margin-top: auto; z-index: 10; }
+.neon-fade { color: #fff; font-size: 0.65rem; letter-spacing: 2px; font-weight: 700; animation: fadeNeon 4s ease-in-out infinite; }
+@keyframes fadeNeon { 0%, 100% { opacity: 0.3; text-shadow: 0 0 2px #fff; } 50% { opacity: 1; text-shadow: 0 0 5px var(--neon); } }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }

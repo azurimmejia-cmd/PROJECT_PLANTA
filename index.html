@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KYMA | Industrial Intelligence</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-slider">
+        <div class="slide slide-1"></div>
+        <div class="slide slide-2"></div>
+        <div class="bg-overlay"></div>
+    </div>
+    <main class="main-wrapper">
+        <div class="content-box">
+            <div id="system-indicator" class="system-indicator">
+                <div class="pulse-dot"></div>
+                <span class="indicator-text">KYMA CORE • NODE ACTIVE</span>
+            </div>
+            <div class="glass-card">
+                <div id="welcome-screen" class="portal-screen">
+                    <div class="branding">
+                        <img src="KYMA.png" alt="Logo KYMA" class="logo-float">
+                        <p class="slogan-text">Excelencia, calidad e innovación</p>
+                        <p class="industrial-text">SISTEMA DE CONTROL DE PLANTA TOLUCA</p>
+                    </div>
+                    <p class="welcome-notice">Portal oficial para el registro automatizado de producción, mermas e inventarios.</p>
+                    <button id="btn-enter" class="btn-industrial"><span>INGRESAR AL PORTAL</span><i class="fa-solid fa-right-to-bracket"></i></button>
+                </div>
+                <div id="main-portal" class="portal-screen d-none">
+                    <div class="branding-mini"><p class="slogan-text">CONTROL OPERATIVO</p></div>
+                    <nav class="menu-grid">
+                        <button class="tab-btn active" data-target="recibo">📥 Recibo</button>
+                        <button class="tab-btn" data-target="cascaron">🏗️ Cascarón</button>
+                        <button class="tab-btn" data-target="guillotina">✂️ Guillotina</button>
+                        <button class="tab-btn" data-target="empaque">📦 Empaque</button>
+                    </nav>
+                    <div class="form-scroll-container">
+                        <!-- RECIBO (values corregidos para coincidir con Inventario_Maestro) -->
+                        <div id="area-recibo" class="form-card active">
+                            <form id="form-recibo">
+                                <div class="select-wrapper">
+                                    <label class="select-label">Insumo Entrante</label>
+                                    <select id="recibo_material" required>
+                                        <option value="" disabled selected>Selecciona material...</option>
+                                        <option value="CARTON (POBLANA)">CARTON (POBLANA)</option>
+                                        <option value="RESISTOL">RESISTOL</option>
+                                        <option value="HOJA DE OPALINA">HOJA DE OPALINA</option>
+                                        <option value="BOBINAS DE PAPEL">BOBINAS DE PAPEL</option>
+                                        <option value="CAJA DE ARCHIVO T1 (CJK-OD-CT)">CAJA DE ARCHIVO T1 (CJK-OD-CT)</option>
+                                        <option value="CAJA DE ARCHIVO T2 (CJK-OD-OF)">CAJA DE ARCHIVO T2 (CJK-OD-OF)</option>
+                                        <option value="CAJA DE ARCHIVO T3 (CJK-OD-REG)">CAJA DE ARCHIVO T3 (CJK-OD-REG)</option>
+                                        <option value="CAJA DE ARCHIVO T4 (CJK-OFIX-TC)">CAJA DE ARCHIVO T4 (CJK-OFIX-TC)</option>
+                                        <option value="CAJA DE ARCHIVO T5 (CJK-OFIX-TO)">CAJA DE ARCHIVO T5 (CJK-OFIX-TO)</option>
+                                        <option value="CAJA DE ARCHIVO T6 (CJK-OFIX-TOBC)">CAJA DE ARCHIVO T6 (CJK-OFIX-TOBC)</option>
+                                    </select>
+                                </div>
+                                <div class="input-wrapper"><i class="fa-solid fa-boxes-stacked"></i><input type="number" id="recibo_cantidad" required placeholder=" " min="1"><label>Cantidad Recibida</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-fingerprint"></i><input type="text" id="recibo_id_tarima" required placeholder=" "><label>ID Tarima / Lote (Col. E)</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-user-gear"></i><input type="text" id="recibo_operador" required placeholder=" "><label>Ingeniero Receptor (Col. F)</label></div>
+                                <div class="select-wrapper"><label class="select-label">Turno</label><select id="recibo_turno" required><option value="Matutino">Matutino</option><option value="Vespertino">Vespertino</option><option value="Nocturno">Nocturno</option></select></div>
+                                <input type="hidden" id="recibo_val" value="">
+                                <button type="submit" class="btn-industrial"><span>SINCRONIZAR ENTRADA</span><i class="fa-solid fa-arrows-rotate"></i></button>
+                                <div class="notification"></div>
+                            </form>
+                        </div>
+                        <!-- CASCARÓN (con ID tarima) -->
+                        <div id="area-cascaron" class="form-card">
+                            <form id="form-cascaron">
+                                <div class="select-wrapper"><label class="select-label">Turno Operativo</label><select id="cascaron_turno" required><option value="Matutino">Matutino</option><option value="Vespertino">Vespertino</option><option value="Nocturno">Nocturno</option></select></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-circle-check"></i><input type="number" id="cascaron_piezas" required placeholder=" " min="0"><label>Piezas Libres de Defecto</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-pallet"></i><input type="text" id="cascaron_id_tarima" required placeholder=" "><label>ID Tarima Consumida</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-dumpster-fire"></i><input type="number" id="cascaron_mermas" value="0" min="0" required placeholder=" "><label>Mermas / Desperdicio</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-id-card"></i><input type="text" id="cascaron_operador" required placeholder=" "><label>Operador de Línea</label></div>
+                                <button type="submit" class="btn-industrial"><span>TRANSMITIR PRODUCCIÓN</span><i class="fa-solid fa-arrows-rotate"></i></button>
+                                <div class="notification"></div>
+                            </form>
+                        </div>
+                        <!-- GUILLOTINA (con ID tarima) -->
+                        <div id="area-guillotina" class="form-card">
+                            <form id="form-guillotina">
+                                <div class="select-wrapper"><label class="select-label">Tipo de Material</label><select id="guillotina_material" required><option value="" disabled selected>Selecciona material...</option><option value="Cascarón">Papel Cascarón</option><option value="Opalina">Opalina</option></select></div>
+                                <div class="select-wrapper"><label class="select-label">Tamaño de Corte resultante</label><select id="guillotina_tamano_corte" required><option value="" disabled selected>Selecciona material primero...</option></select></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-pallet"></i><input type="text" id="guillotina_id_tarima" required placeholder=" "><label>ID Tarima Consumida</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-layer-group"></i><input type="number" id="guillotina_hojas_entrada" required placeholder=" " min="0"><label>Hojas de Entrada (Base)</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-scissors"></i><input type="number" id="guillotina_piezas_resultantes" readonly placeholder=" " style="background: rgba(0,0,0,0.03); color: #2d3748;"><label>Piezas Resultantes (Automático)</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-trash-can"></i><input type="number" id="guillotina_merma" required placeholder=" " min="0" value="0"><label>Merma Obtenida (Hojas)</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-recycle"></i><input type="number" id="guillotina_merma_recuperada" readonly placeholder=" " style="background: rgba(0,0,0,0.03); color: #2d3748;"><label>Merma Recuperable (80% Auto)</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-user-ninja"></i><input type="text" id="guillotina_operador" required placeholder=" "><label>Cortador Responsable</label></div>
+                                <button type="submit" class="btn-industrial"><span>REGISTRAR CORTE</span><i class="fa-solid fa-arrows-rotate"></i></button>
+                                <div class="notification"></div>
+                            </form>
+                        </div>
+                        <!-- EMPAQUE (con ID tarima opcional) -->
+                        <div id="area-empaque" class="form-card">
+                            <form id="form-empaque">
+                                <div class="select-wrapper"><label class="select-label">Producto a Empacar</label><select id="empaque_producto" required><option value="" disabled selected>Selecciona producto...</option><option value="Papel Cascarón Terminado">Papel Cascarón Terminado</option><option value="Opalina Terminada">Opalina Terminada</option></select></div>
+                                <div class="select-wrapper"><label class="select-label">Variante / Tamaño</label><select id="empaque_tamano" required><option value="" disabled selected>Selecciona producto primero...</option></select></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-box"></i><input type="number" id="empaque_paquetes" required placeholder=" " min="0"><label>Cantidad de Paquetes Listos</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-pallet"></i><input type="text" id="empaque_id_tarima" placeholder=" "><label>ID Tarima de Producto (opcional)</label></div>
+                                <div class="input-wrapper"><i class="fa-solid fa-people-carry-box"></i><input type="text" id="empaque_operador" required placeholder=" "><label>Empacador Responsable</label></div>
+                                <button type="submit" class="btn-industrial"><span>REGISTRAR EMPAQUE</span><i class="fa-solid fa-arrows-rotate"></i></button>
+                                <div class="notification"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer-tech"><p class="neon-fade">&copy; ELABORÓ IQI KIBSAIM AZURIM MEDINA MEJIA</p></footer>
+    </main>
+    <script src="codigo.js"></script>
+</body>
+</html>
