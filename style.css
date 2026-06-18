@@ -172,3 +172,149 @@ select:focus { border-color: var(--primary); background: white; }
 @keyframes fadeNeon { 0%, 100% { opacity: 0.3; text-shadow: 0 0 2px #fff; } 50% { opacity: 1; text-shadow: 0 0 5px var(--neon); } }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+/* ==========================================
+ESTILOS PARA SISTEMA DE LOTES
+   ========================================== */
+.lotes-container {
+    background: rgba(0, 74, 153, 0.04);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(0, 74, 153, 0.10);
+}
+
+.lotes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.lotes-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lotes-title i {
+    font-size: 0.8rem;
+}
+
+.btn-add-lote {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-add-lote:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 74, 153, 0.3);
+}
+
+.btn-add-lote i {
+    font-size: 0.7rem;
+}
+
+.lotes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.lotes-list::-webkit-scrollbar {
+    width: 3px;
+}
+
+.lotes-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 74, 153, 0.2);
+    border-radius: 10px;
+}
+
+.lote-item {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    padding: 4px 6px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.lote-item input {
+    flex: 1;
+    padding: 4px 6px;
+    border: none;
+    border-bottom: 1px solid #cbd5e0;
+    background: transparent;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #1a202c;
+    outline: none;
+    min-width: 0;
+}
+
+.lote-item input:focus {
+    border-color: var(--primary);
+}
+
+.lote-item input::placeholder {
+    font-weight: 400;
+    color: #a0aec0;
+    font-size: 0.7rem;
+}
+
+.lote-item .lote-id {
+    flex: 0.7;
+    min-width: 60px;
+}
+
+.lote-item .lote-cantidad,
+.lote-item .lote-hojas {
+    flex: 0.8;
+    min-width: 50px;
+}
+
+.lote-item .lote-merma {
+    flex: 0.6;
+    min-width: 50px;
+}
+
+.btn-remove-lote {
+    background: rgba(255, 0, 0, 0.08);
+    border: none;
+    color: #b91c1c;
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.btn-remove-lote:hover {
+    background: rgba(255, 0, 0, 0.2);
+    transform: scale(1.1);
+}
+
+.lote-total {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(0, 74, 153, 0.10);
+    text-align: right;
+    font-size: 0.

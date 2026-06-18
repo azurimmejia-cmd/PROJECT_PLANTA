@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // 2. INICIALIZAR EVENTOS DE ENVÍO
+    // 2. INICIALIZAR EVENTOS DE ENVÍO Y LOTES
     // ==========================================
     const formRecibo = document.getElementById('form-recibo');
     const formCascaron = document.getElementById('form-cascaron');
@@ -71,29 +71,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (formGuillotina) formGuillotina.addEventListener('submit', enviarGuillotina);
     if (formEmpaque) formEmpaque.addEventListener('submit', enviarEmpaque);
 
+    // Inicializar sistemas de lotes para cada área
+    inicializarLotes('recibo');
+    inicializarLotes('cascaron');
+    inicializarLotes('guillotina');
+    inicializarLotes('empaque');
+
     // ==========================================
     // 3. CÁLCULOS AUTOMÁTICOS EN GUILLOTINA
     // ==========================================
     const guillotinaMaterial = document.getElementById('guillotina_material');
     const guillotinaTamano = document.getElementById('guillotina_tamano_corte');
-    const guillotinaHojasEntrada = document.getElementById('guillotina_hojas_entrada');
-    const guillotinaPiezasResultantes = document.getElementById('guillotina_piezas_resultantes');
-    const guillotinaMermaRecuperada = document.getElementById('guillotina_merma_recuperada');
-    const guillotinaMerma = document.getElementById('guillotina_merma');
-
-    function actualizarCalculosGuillotina() {
-        const hojas = parseInt(guillotinaHojasEntrada.value) || 0;
-        const material = guillotinaMaterial ? guillotinaMaterial.value : '';
-        let factor = (material === 'Cascarón') ? 2 : 1;
-        if (guillotinaPiezasResultantes) guillotinaPiezasResultantes.value = hojas * factor;
-        const merma = parseInt(guillotinaMerma ? guillotinaMerma.value : 0) || 0;
-        if (guillotinaMermaRecuperada) guillotinaMermaRecuperada.value = Math.floor(merma * 0.8);
-    }
-    if (guillotinaHojasEntrada) {
-        guillotinaHojasEntrada.addEventListener('input', actualizarCalculosGuillotina);
-        if (guillotinaMerma) guillotinaMerma.addEventListener('input', actualizarCalculosGuillotina);
-        if (guillotinaMaterial) guillotinaMaterial.addEventListener('change', actualizarCalculosGuillotina);
-    }
 
     // Dinámica tamaños de corte
     const tamañosCascaron = ['1/8 (28x35 cm)', '1/4 (35x56 cm)', '1/2 (56x70 cm)'];
@@ -111,7 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     guillotinaTamano.appendChild(opt);
                 });
             }
-            actualizarCalculosGuillotina();
         });
     }
 
@@ -134,10 +121,96 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// 4. FUNCIONES AUXILIARES
+// 4. SISTEMA DE LOTES (MÚLTIPLE INGRESO)
+// ==========================================
+function inicializarLotes(area) {
+    const container = document.getElementById(`lotes-list-${area}`);
+    const addBtn = document.getElementById(`add-lote-${area}`);
+    const countSpan = document.getElementById(`lote-count-${area}`);
+    const totalSpan = document.getElementById(`lote-total-${area}`);
+
+    if (!container) return;
+
+    // Función para actualizar contadores y totales
+    function actualizarTotales() {
+        const items = container.querySelectorAll('.lote-item');
+        countSpan.textContent = items.length;
+
+        let total = 0;
+        const cantidadInputs = container.querySelectorAll('.lote-cantidad, .lote-hojas');
+        cantidadInputs.forEach(input => {
+            const val = parseInt(input.value) || 0;
+            total += val;
+        });
+        totalSpan.textContent = total;
+    }
+
+    // Función para agregar un nuevo lote
+    function agregarLote() {
+        const template = container.querySelector('.lote-item');
+        if (!template) return;
+
+        const newItem = template.cloneNode(true);
+        
+        // Limpiar valores
+        newItem.querySelectorAll('input').forEach(input => {
+            input.value = '';
+        });
+
+        // Botón de eliminar
+        const removeBtn = newItem.querySelector('.btn-remove-lote');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                if (container.querySelectorAll('.lote-item').length > 1) {
+                    newItem.remove();
+                    actualizarTotales();
+                } else {
+                    mostrarNotificacion(document.querySelector(`#form-${area}`), 'Debe haber al menos un lote', true);
+                }
+            });
+        }
+
+        // Eventos para actualizar totales
+        newItem.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', actualizarTotales);
+        });
+
+        container.appendChild(newItem);
+        actualizarTotales();
+    }
+
+    // Configurar botón de agregar
+    if (addBtn) {
+        addBtn.addEventListener('click', agregarLote);
+    }
+
+    // Configurar eventos en los inputs existentes
+    container.querySelectorAll('.lote-item').forEach(item => {
+        const removeBtn = item.querySelector('.btn-remove-lote');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                if (container.querySelectorAll('.lote-item').length > 1) {
+                    item.remove();
+                    actualizarTotales();
+                } else {
+                    mostrarNotificacion(document.querySelector(`#form-${area}`), 'Debe haber al menos un lote', true);
+                }
+            });
+        }
+        item.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', actualizarTotales);
+        });
+    });
+
+    // Inicializar totales
+    actualizarTotales();
+}
+
+// ==========================================
+// 5. FUNCIONES AUXILIARES
 // ==========================================
 function mostrarNotificacion(formElement, mensaje, esError = false) {
-    const notif = formElement.querySelector('.notification');
+    const notif = formElement ? formElement.querySelector('.notification') : null;
     if (!notif) return;
     notif.style.display = "block";
     notif.innerText = mensaje;
@@ -156,11 +229,25 @@ function enviarDatos(payload, formElement) {
     .then(() => {
         mostrarNotificacion(formElement, "¡Sincronización Completada!");
         formElement.reset();
-        if (formElement.id === 'form-guillotina') {
-            const piezas = document.getElementById('guillotina_piezas_resultantes');
-            const recuperada = document.getElementById('guillotina_merma_recuperada');
-            if (piezas) piezas.value = '';
-            if (recuperada) recuperada.value = '';
+        // Reiniciar lotes
+        const area = formElement.id.replace('form-', '');
+        const container = document.getElementById(`lotes-list-${area}`);
+        if (container) {
+            const items = container.querySelectorAll('.lote-item');
+            items.forEach((item, index) => {
+                if (index > 0) {
+                    item.remove();
+                } else {
+                    item.querySelectorAll('input').forEach(input => {
+                        input.value = '';
+                    });
+                }
+            });
+            // Actualizar totales
+            const countSpan = document.getElementById(`lote-count-${area}`);
+            const totalSpan = document.getElementById(`lote-total-${area}`);
+            if (countSpan) countSpan.textContent = '1';
+            if (totalSpan) totalSpan.textContent = '0';
         }
     })
     .catch(err => {
@@ -169,7 +256,38 @@ function enviarDatos(payload, formElement) {
 }
 
 // ==========================================
-// 5. ENVÍOS POR ÁREA
+// 6. RECOLECCIÓN DE DATOS DE LOTES
+// ==========================================
+function obtenerLotes(area) {
+    const container = document.getElementById(`lotes-list-${area}`);
+    if (!container) return [];
+
+    const items = container.querySelectorAll('.lote-item');
+    const lotes = [];
+
+    items.forEach(item => {
+        const idInput = item.querySelector('.lote-id');
+        const cantidadInput = item.querySelector('.lote-cantidad, .lote-hojas');
+        const mermaInput = item.querySelector('.lote-merma');
+
+        const id = idInput ? idInput.value.trim() : '';
+        const cantidad = parseInt(cantidadInput ? cantidadInput.value : 0) || 0;
+        const merma = parseInt(mermaInput ? mermaInput.value : 0) || 0;
+
+        if (id) {
+            lotes.push({
+                id: id,
+                cantidad: cantidad,
+                merma: merma
+            });
+        }
+    });
+
+    return lotes;
+}
+
+// ==========================================
+// 7. ENVÍOS POR ÁREA
 // ==========================================
 function enviarRecibo(e) {
     e.preventDefault();
@@ -179,13 +297,20 @@ function enviarRecibo(e) {
         mostrarNotificacion(form, "No autorizado. Acceso denegado.", true);
         return;
     }
+
+    const lotes = obtenerLotes('recibo');
+    if (lotes.length === 0) {
+        mostrarNotificacion(form, "Debes registrar al menos un lote con ID", true);
+        return;
+    }
+
     const payload = {
         area_action: 'recibo',
         fecha: new Date().toLocaleDateString('es-MX'),
         hora: new Date().toLocaleTimeString('es-MX'),
         material: document.getElementById('recibo_material').value,
-        cantidad: parseInt(document.getElementById('recibo_cantidad').value) || 0,
-        id_tarima: document.getElementById('recibo_id_tarima').value.trim(),
+        lotes: lotes,
+        total_piezas: lotes.reduce((sum, l) => sum + l.cantidad, 0),
         operador: document.getElementById('recibo_operador').value.trim(),
         turno: document.getElementById('recibo_turno').value
     };
@@ -195,19 +320,21 @@ function enviarRecibo(e) {
 function enviarCascaron(e) {
     e.preventDefault();
     const form = e.target;
-    const idTarima = document.getElementById('cascaron_id_tarima').value.trim();
-    if (!idTarima) {
-        mostrarNotificacion(form, "Debes especificar el ID de la tarima consumida", true);
+
+    const lotes = obtenerLotes('cascaron');
+    if (lotes.length === 0) {
+        mostrarNotificacion(form, "Debes registrar al menos un lote con ID", true);
         return;
     }
+
     const payload = {
         area_action: 'cascaron',
         fecha: new Date().toLocaleDateString('es-MX'),
         hora: new Date().toLocaleTimeString('es-MX'),
         turno: document.getElementById('cascaron_turno').value,
-        piezas: parseInt(document.getElementById('cascaron_piezas').value) || 0,
-        id_tarima: idTarima,
-        mermas: parseInt(document.getElementById('cascaron_mermas').value) || 0,
+        lotes: lotes,
+        total_piezas: lotes.reduce((sum, l) => sum + l.cantidad, 0),
+        total_mermas: lotes.reduce((sum, l) => sum + l.merma, 0),
         operador: document.getElementById('cascaron_operador').value.trim()
     };
     enviarDatos(payload, form);
@@ -216,22 +343,34 @@ function enviarCascaron(e) {
 function enviarGuillotina(e) {
     e.preventDefault();
     const form = e.target;
-    const idTarima = document.getElementById('guillotina_id_tarima').value.trim();
-    if (!idTarima) {
-        mostrarNotificacion(form, "Debes especificar el ID de la tarima consumida", true);
+
+    const lotes = obtenerLotes('guillotina');
+    if (lotes.length === 0) {
+        mostrarNotificacion(form, "Debes registrar al menos un lote con ID", true);
         return;
     }
+
+    const material = document.getElementById('guillotina_material').value;
+    const factor = material === 'Cascarón' ? 2 : 1;
+
+    // Calcular piezas resultantes por lote
+    const lotesConPiezas = lotes.map(l => ({
+        ...l,
+        piezas_resultantes: l.cantidad * factor,
+        merma_recuperable: Math.floor(l.merma * 0.8)
+    }));
+
     const payload = {
         area_action: 'guillotina',
         fecha: new Date().toLocaleDateString('es-MX'),
         hora: new Date().toLocaleTimeString('es-MX'),
-        material: document.getElementById('guillotina_material').value,
+        material: material,
         tamano_corte: document.getElementById('guillotina_tamano_corte').value,
-        id_tarima: idTarima,
-        hojas_entrada: parseInt(document.getElementById('guillotina_hojas_entrada').value) || 0,
-        piezas_resultantes: parseInt(document.getElementById('guillotina_piezas_resultantes').value) || 0,
-        merma: parseInt(document.getElementById('guillotina_merma').value) || 0,
-        merma_recuperable: parseInt(document.getElementById('guillotina_merma_recuperada').value) || 0,
+        lotes: lotesConPiezas,
+        total_hojas: lotes.reduce((sum, l) => sum + l.cantidad, 0),
+        total_piezas: lotes.reduce((sum, l) => sum + (l.cantidad * factor), 0),
+        total_merma: lotes.reduce((sum, l) => sum + l.merma, 0),
+        total_merma_recuperable: lotes.reduce((sum, l) => sum + Math.floor(l.merma * 0.8), 0),
         operador: document.getElementById('guillotina_operador').value.trim()
     };
     enviarDatos(payload, form);
@@ -240,14 +379,21 @@ function enviarGuillotina(e) {
 function enviarEmpaque(e) {
     e.preventDefault();
     const form = e.target;
+
+    const lotes = obtenerLotes('empaque');
+    if (lotes.length === 0) {
+        mostrarNotificacion(form, "Debes registrar al menos un lote", true);
+        return;
+    }
+
     const payload = {
         area_action: 'empaque',
         fecha: new Date().toLocaleDateString('es-MX'),
         hora: new Date().toLocaleTimeString('es-MX'),
         producto: document.getElementById('empaque_producto').value,
         tamano: document.getElementById('empaque_tamano').value,
-        id_tarima: document.getElementById('empaque_id_tarima').value.trim() || "",
-        paquetes: parseInt(document.getElementById('empaque_paquetes').value) || 0,
+        lotes: lotes,
+        total_paquetes: lotes.reduce((sum, l) => sum + l.cantidad, 0),
         operador: document.getElementById('empaque_operador').value.trim()
     };
     enviarDatos(payload, form);
