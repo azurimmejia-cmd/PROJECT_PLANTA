@@ -1,7 +1,7 @@
 // ==========================================
 // CONFIGURACIÓN CENTRALIZADA
 // ==========================================
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycby0o1KOryiHw9Ge3Dzb0f4MokBzjys9z0DMhgYH1dE1hVk3iNZ3U4QHe-jfryXEg0_j/exec";
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycby0o1KOryiHw9Ge3Dzb0f4MokBzjys9z0DMhgYH1dE1hVk3iNZ3U4QHe-jfryXEg0_j/execgit branch";
 const CODIGOS_AUTORIZADOS = ["ESIQIE_2026_1901"];
 
 // ==========================================
